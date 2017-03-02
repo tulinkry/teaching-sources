@@ -1,0 +1,9 @@
+programs: [
+	[
+		source: main.cpp
+		dependency: [
+			complex.cpp,
+			complex.h
+		]
+	]
+]
