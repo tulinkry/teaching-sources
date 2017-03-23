@@ -6,6 +6,8 @@
 
 using namespace std;
 
+// https://github.com/tulinkry/teaching-sources/blob/12_45/05
+
 class CPage
 {
 	private:
@@ -36,6 +38,29 @@ class CPage
 
 			iff . close ();
 		}
+
+
+		string & operator [] ( int index )
+		{
+			if ( index < 0 || index >= m_Cnt )
+				throw "Out of bounds";
+			return *m_Lines [ index ];
+		}
+
+		const string & operator [] ( int index ) const
+		{
+			if ( index < 0 || index >= m_Cnt )
+				throw "Out of bounds";
+			return *m_Lines [ index ];
+		}
+
+		friend ostream & operator << ( ostream & os, const CPage & page )
+		{
+			for ( int i = 0; i < page . m_Cnt; i ++ ) {
+				os << *page . m_Lines [ i ] << endl;
+			}
+			return os;
+		}		
 };
 
 
@@ -43,7 +68,40 @@ class CBook
 {
 	private:
 		CPage ** m_Pages;
+		int m_Cnt, m_Size;
+	public:
+
+		CBook & addPage ( const CPage & page )
+		{
+			if ( m_Cnt >= m_Size )
+				throw "Out of bounds";
+			m_Pages [ m_Cnt ++ ] = new CPage ( page );
+			return *this;
+		}
+
+		CPage & operator [] ( int index )
+		{
+			if ( index < 0 || index >= m_Cnt )
+				throw "Out of bounds";
+			return *m_Pages [ index ];
+		}
+
+		const CPage & operator [] ( int index ) const
+		{
+			if ( index < 0 || index >= m_Cnt )
+				throw "Out of bounds";
+			return *m_Pages [ index ];
+		}
+
+		friend ostream & operator << ( ostream & os, const CBook & book )
+		{
+			for ( int i = 0; i < book . m_Cnt; i ++ )
+				os << *book . m_Pages [ i ] << endl;
+			return os;
+		}
+
 };
+
 
 
 int main(int argc, char const *argv[])
@@ -164,7 +222,7 @@ int main(int argc, char const *argv[])
 	assert ( d[2][0] == "Nicméně drtivou většinu absolutně nenapadne," );
 	assert ( d[2][1] == "že ta meta je někde výš než přihlásit se na českou školu." );
 
-	const CBook x ( a ); // will not trigger copy on write
+	const CBook x ( a ); // will not trigger detach ()
 
 	assert ( x[0][0] == "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod" );
 	assert ( x[0][1] == "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam," );
